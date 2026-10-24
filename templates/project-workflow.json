@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "projectName": "<PROJECT_NAME>",
+  "repository": "<OWNER/REPOSITORY>",
+  "primaryBranch": "<BRANCH>",
+  "cli": {
+    "launcher": "./pj",
+    "implementation": "scripts/pj.mjs"
+  },
+  "graph": {
+    "enabled": false,
+    "command": "graphify",
+    "outputDirectory": "graphify-out",
+    "traceQueries": "docs/architecture/trace-queries.json"
+  },
+  "checks": {
+    "frontend": [],
+    "backend": [],
+    "all": []
+  },
+  "handover": "docs/handover/current.md",
+  "checklist": "FEATURE_IMPLEMENTATION_CHECKLIST.md",
+  "safety": {
+    "autoStage": false,
+    "autoCommit": false,
+    "autoPush": false,
+    "autoMerge": false,
+    "autoDeploy": false,
+    "autoMigrate": false
+  }
+}
