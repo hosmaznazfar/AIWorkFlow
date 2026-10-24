@@ -3,7 +3,7 @@
 ## Repository state
 - Repository: https://github.com/hosmaznazfar/AIWorkFlow
 - Branch: main.
-- Latest source implementation commit: 746993ff3f8a82f9daafe133c9f6d2a7621e7121. Latest CLI guidance/template commit before this handover refresh: 8e38348910029b0ac9f0500532679264b86b8861.
+- Latest source implementation commits: 746993ff3f8a82f9daafe133c9f6d2a7621e7121 (Python runtime selection) and bc066fcee22550823f56d4551d9b927bba37fbd4 (opt-in Rust bootstrap). Latest setup integration commit: 6646e71e868da936ad4e2c62d428b97e2198c657. Latest CI update: edaf79e1976b870060ef0c11bbd171f761fc3fd8.
 - Local worktree state: unknown; no local checkout or local tests were run in this session.
 
 ## Objective
@@ -17,7 +17,8 @@ Document the target `pj` workflow architecture so it can initialize dependencies
 - Added `docs/CHECK_CONFIGURATION.md` with a configuration contract and acceptance tests.
 - Added `templates/pj-workflow.toml` as a starter schema for ordered check steps.
 - Added `pj-core/` Rust CLI with clap/TOML config parsing, project/tool detection, opt-in uv/Graphify install prompts, README managed-section updates, ordered check execution, dry-run/list/remove/add options, per-step timeout handling, and unit tests.
-- Added the root `pj` launcher and `.github/workflows/pj-core.yml` for rustfmt, tests, and Clippy.
+- Added the root `pj` launcher and `.github/workflows/pj-core.yml` for rustfmt, tests, Clippy, setup syntax, and disposable bootstrap checks.
+- The POSIX launcher now offers an explicit confirmation before using the official rustup installer if Cargo is missing.
 - Updated `scripts/setup.mjs` to copy the Rust core into target projects and generate a Rust/Cargo-based launcher for new targets.
 - Updated project integration/dependency docs and the generated AI README template to match the implemented command set.
 - Added a mixed-language detection unit test and README output for detected commands/tool availability.
