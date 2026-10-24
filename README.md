@@ -25,6 +25,9 @@ A reusable, project-local workflow for AI coding assistants and developers. It s
 - `templates/handover-current.md` — tracked handover template.
 - `templates/pj.mjs` — portable starter for a project-specific CLI.
 - `templates/project-workflow.json` — project config template.
+- `templates/FEATURE_IMPLEMENTATION_CHECKLIST.md` — phased feature checklist.
+- `templates/trace-queries.json` — optional reusable Graphify trace-query template.
+- `scripts/setup.mjs` — conservative bootstrapper for new/existing projects; refuses to overwrite workflow files.
 
 ## Quick start concept
 
@@ -32,7 +35,8 @@ For an existing project, first inspect its languages, package managers, tests, d
 
 1. Clone this repository.
 2. Review `docs/PROJECT_INTEGRATION.md` and `docs/DEPENDENCIES.md`.
-3. Run the planned setup in a clean branch and review the diff.
+3. Run the bootstrapper from the AIWorkFlow checkout against the target project: `node /path/to/AIWorkFlow/scripts/setup.mjs /path/to/target-project` (or run it from this repo with the target path).
+4. Review the planned setup in a clean branch and inspect the diff.
 4. Configure the project-specific command in `project-workflow.json` and `./pj`.
 5. Read the generated project's `AI_README.md` and run its checks.
 6. Build/refresh the graph and review artifacts before committing them.
