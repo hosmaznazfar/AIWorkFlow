@@ -13,7 +13,7 @@ Dependency policy: **core workflow dependencies and project-specific dependencie
 | PowerShell launcher | Windows alternative | Invoke the binary on Windows |
 | TOML configuration | Read by the pj core | Project and action declarations |
 
-The current MJS CLI and setup script are prototypes and require Node.js. They are not the target dependency model. Do not claim a Rust binary or installer is available until it has been implemented, packaged, and tested.
+The Rust CLI source and POSIX launcher are implemented, but prebuilt release binaries are not published. Running from source requires Rust/Cargo and access to download crates on first build. The bootstrap script itself requires Node.js. The MJS CLI remains a legacy prototype.
 
 ## Optional graph support
 
@@ -46,11 +46,11 @@ The AI assistant and GitHub integration are not dependencies installed by this r
 
 ## Verify dependencies
 
-For the current MJS prototype only, run node --version and git --version. For the target Rust CLI, verify pj --version and pj doctor once implemented. For Graphify, follow upstream install steps and run graphify --version. Then verify the project's own dependency/version checks.
+For the bootstrap script, run node --version. For the Rust CLI, verify cargo --version, ./pj --version, and ./pj doctor. The Rust source has not been confirmed by a successful remote CI run in this handover. For Graphify, follow upstream install steps and run graphify --version. Then verify the project's own dependency/version checks.
 
 ## Init behavior and prerequisite detection
 
-The target `pj init` should check for the core CLI, Git, uv, and Graphify, then inspect the project manifests to detect other required tools. It should offer installation or provide official instructions for missing tools. Do not auto-install all ecosystems.
+The current `pj init` checks uv and Graphify, then `pj doctor` inspects project manifests and provides official installation guidance for missing Node.js, Rust/Cargo, Python, Go, and .NET tools. Optional uv/Graphify installs require an interactive confirmation. Do not auto-install all ecosystems.
 
 ### uv
 
