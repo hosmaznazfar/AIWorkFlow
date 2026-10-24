@@ -121,6 +121,11 @@ fn doctor(r:&Path)->Result<(),String>{
     for(f,l)in[("package.json","Node.js"),("Cargo.toml","Rust"),("pyproject.toml","Python"),("go.mod","Go")]{if r.join(f).is_file(){println!(" detected: {l} ({f})")}}
     if fs::read_dir(r).map(|es|es.flatten().any(|e|e.path().extension().is_some_and(|x|x=="sln"||x=="slnx"||x=="csproj"))).unwrap_or(false){println!(" detected: .NET")}
     for t in ["git","uv","graphify","node","npm","pnpm","yarn","bun","python","python3","cargo","rustc","dotnet","go"]{println!(" {:<9} {}",t,if has_exe(t){"available"}else{"not found"})}
+    if r.join("package.json").is_file() && !has_exe("node") { println!(" guidance: install Node.js from https://nodejs.org/en/download/"); }
+    if r.join("Cargo.toml").is_file() && !has_exe("cargo") { println!(" guidance: install Rust/Cargo from https://www.rust-lang.org/tools/install"); }
+    if r.join("pyproject.toml").is_file() && !has_exe("python") && !has_exe("python3") { println!(" guidance: install Python from https://www.python.org/downloads/"); }
+    if r.join("go.mod").is_file() && !has_exe("go") { println!(" guidance: install Go from https://go.dev/doc/install"); }
+    if fs::read_dir(r).map(|es|es.flatten().any(|e|e.path().extension().is_some_and(|x|x=="sln"||x=="slnx"||x=="csproj"))).unwrap_or(false) && !has_exe("dotnet") { println!(" guidance: install the .NET SDK from https://dotnet.microsoft.com/en-us/download"); }
     println!(" config    {}",if config_path(r).exists(){CONFIG}else{"not initialized"});Ok(())
 }
 fn confirm(q:&str)->Result<bool,String>{print!("{q} [y/N] ");io::stdout().flush().map_err(|e|e.to_string())?;let mut s=String::new();io::stdin().read_line(&mut s).map_err(|e|e.to_string())?;Ok(matches!(s.trim().to_ascii_lowercase().as_str(),"y"|"yes"))}
