@@ -2,7 +2,7 @@
 
 A reusable, project-local workflow for AI coding assistants and developers. It supports **new projects and existing repositories** and provides a project-specific `pj` CLI, graph-assisted planning, tracked docs, safe phased implementation, and GitHub handovers so a new chat can resume reliably.
 
-> Status: starter scaffold. The setup scripts and templates are being bootstrapped in this repository; test them in a disposable repository before adopting them in a production project.
+> Status: initial Rust CLI implementation is committed with unit tests and GitHub Actions CI. It has not yet been verified by a successful remote build in this handover; check the Actions run before production adoption. The bootstrapper and stack detection remain conservative and should be tested in disposable repositories.
 
 ## Goals
 
@@ -42,7 +42,7 @@ For an existing project, first inspect its languages, package managers, tests, d
 2. Review `docs/PROJECT_INTEGRATION.md` and `docs/DEPENDENCIES.md`.
 3. Run the bootstrapper from the AIWorkFlow checkout against the target project: `node /path/to/AIWorkFlow/scripts/setup.mjs /path/to/target-project` (or run it from this repo with the target path).
 4. Review the planned setup in a clean branch and inspect the diff.
-4. Configure the project-specific checks in `.pj/workflow.toml` using `./pj check --add-command` or edit the TOML directly.
+4. Run `./pj init`, review `.pj/workflow.toml`, then add project-specific checks with `./pj check --add-command "npm run test"` or edit the TOML directly.
 5. Read the generated project's `AI_README.md` and run its checks.
 6. Build/refresh the graph and review artifacts before committing them.
 7. Commit and push only reviewed changes.
