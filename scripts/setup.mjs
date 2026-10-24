@@ -22,6 +22,8 @@ const mapping = [
   ["templates/FEATURE_IMPLEMENTATION_CHECKLIST.md", "FEATURE_IMPLEMENTATION_CHECKLIST.md"],
   ["templates/project-workflow.json", "project-workflow.json"],
   ["templates/pj.mjs", "scripts/pj.mjs"],
+  ["pj-core/Cargo.toml", "pj-core/Cargo.toml"],
+  ["pj-core/src/main.rs", "pj-core/src/main.rs"],
   ["templates/trace-queries.json", "docs/architecture/trace-queries.json"]
 ];
 const replacements = (s) => s.replaceAll("<PROJECT_NAME>", projectName)
@@ -44,7 +46,7 @@ for (const [src, dst] of mapping) {
 }
 const launcher = join(targetRoot, "pj");
 if (!existsSync(launcher)) {
-  writeFileSync(launcher, '#!/bin/sh\nset -eu\nROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"\nexec node "$ROOT/scripts/pj.mjs" "$@"\n', { flag: "wx" });
+  writeFileSync(launcher, '#!/bin/sh\nset -eu\nROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"\nif [ -x "$ROOT/pj-core/target/release/pj" ]; then exec "$ROOT/pj-core/target/release/pj" "$@"; fi\nif ! command -v cargo >/dev/null 2>&1; then echo "[pj] Rust/Cargo is required: https://www.rust-lang.org/tools/install" >&2; exit 127; fi\nexec cargo run --quiet --manifest-path "$ROOT/pj-core/Cargo.toml" -- "$@"\n', { flag: "wx" });
   chmodSync(launcher, 0o755);
   console.log("Created pj");
 } else {
@@ -66,7 +68,7 @@ This repository uses [AIWorkFlow](https://github.com/hosmaznazfar/AIWorkFlow) fo
 - Read `AI_README.md` and `CHATGPT_CONTEXT.md` before AI-assisted changes.
 - Start a new chat with `docs/CHATGPT_NEW_CHAT_STARTER.md`.
 - Persistent handover: `docs/handover/current.md`.
-- CLI: `./pj help` (requires Node.js and Git).
+- CLI: `./pj --help` and `./pj init` (requires Rust/Cargo on first use).
 - Review `docs/DEPENDENCIES.md` in the AIWorkFlow repository and this project's actual package manifests for dependencies.
 - Graphify is optional; enable it only after installing/configuring it for this project.
 
@@ -80,5 +82,5 @@ Do not commit, push, merge, deploy, or run migrations automatically. Review gene
   writeFileSync(readmePath, `# ${projectName}\n\nDocument this project's purpose, real dependencies, setup and validation commands.\n\n${marker}\n## AI-assisted development workflow\n\nSee \`AI_README.md\`, \`CHATGPT_CONTEXT.md\`, and \`docs/CHATGPT_NEW_CHAT_STARTER.md\`. Run \`./pj help\` for the local workflow CLI.\n<!-- AIWORKFLOW:END -->\n`, { flag: "wx" });
   console.log("Created README.md with workflow section; complete the project-specific sections.");
 }
-console.log("\nBootstrap complete. Inspect README.md and every generated file; configure actual checks in project-workflow.json before using ./pj check or ./pj sync.");
+console.log("\nBootstrap complete. Inspect README.md and every generated file, then run ./pj init to detect project checks and initialize .pj/workflow.toml.");
 console.log("This script does not install packages, run project code, stage, commit, push, merge, deploy, or migrate.");
