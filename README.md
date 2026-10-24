@@ -24,7 +24,10 @@ A reusable, project-local workflow for AI coding assistants and developers. It s
 - `templates/CHATGPT_CONTEXT.md` — project-specific assistant context.
 - `templates/CHATGPT_NEW_CHAT_STARTER.md` — reusable new-chat prompt.
 - `templates/handover-current.md` — tracked handover template.
-- `templates/pj.mjs` — portable starter for a project-specific CLI.
+- `pj-core/` — Rust CLI core, tests, and build instructions.
+- `pj` — POSIX launcher for the Rust CLI (uses Cargo when no release binary exists).
+- `.github/workflows/pj-core.yml` — Rust formatting, test, and Clippy CI.
+- `templates/pj.mjs` — legacy portable starter CLI prototype.
 - `templates/project-workflow.json` — legacy prototype config template.
 - `templates/pj-workflow.toml` — target TOML template for ordered project checks.
 - `templates/FEATURE_IMPLEMENTATION_CHECKLIST.md` — phased feature checklist.
@@ -39,7 +42,7 @@ For an existing project, first inspect its languages, package managers, tests, d
 2. Review `docs/PROJECT_INTEGRATION.md` and `docs/DEPENDENCIES.md`.
 3. Run the bootstrapper from the AIWorkFlow checkout against the target project: `node /path/to/AIWorkFlow/scripts/setup.mjs /path/to/target-project` (or run it from this repo with the target path).
 4. Review the planned setup in a clean branch and inspect the diff.
-4. Configure the project-specific command in `project-workflow.json` and `./pj`.
+4. Configure the project-specific checks in `.pj/workflow.toml` using `./pj check --add-command` or edit the TOML directly.
 5. Read the generated project's `AI_README.md` and run its checks.
 6. Build/refresh the graph and review artifacts before committing them.
 7. Commit and push only reviewed changes.
@@ -51,18 +54,18 @@ The setup must be idempotent: safe to rerun, preserve user content, and explain 
 The intended common interface is:
 
 ```bash
-./pj help
-./pj status
-./pj check all
-./pj graph refresh
-./pj graph review
-./pj graph query "question"
-./pj graph path "source" "target"
-./pj graph explain "symbol"
-./pj traces update
-./pj sync
-./pj handover
+./pj --help
+./pj init
+./pj doctor
+./pj workflow validate
+./pj check --add-command "npm run test"
+./pj check --list
+./pj check --dry-run
+./pj check
+./pj check --remove npm-run-test
 ```
+
+The Rust core currently implements setup, doctor, workflow validation, and ordered checks. Graph, trace, sync, status, and handover commands remain part of the broader workflow contract but are not yet implemented by this Rust CLI; do not treat the legacy MJS prototype as equivalent.
 
 Each project may add language-specific checks, but the shared commands and safety rules should remain consistent. Do not advertise a command until it is implemented for that project.
 
