@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
-use std::{env, fs, io::{self, Write}, path::{Component, Path, PathBuf}, process::{Command, Stdio}, thread, time::{Duration, Instant}};
+use std::{env, fs, io::{self, IsTerminal, Write}, path::{Component, Path, PathBuf}, process::{Command, Stdio}, thread, time::{Duration, Instant}};
 
 const CONFIG: &str = ".pj/workflow.toml";
 const START: &str = "<!-- pj:dependencies:start -->";
@@ -23,13 +23,14 @@ enum Commands {
 }
 #[derive(Subcommand)]
 enum WorkflowAction { Validate }
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct Config {
     #[serde(default="schema_version")] schema_version: u32,
     #[serde(default)] project: Project,
     #[serde(default)] checks: Checks,
 }
 fn schema_version()->u32{1}
+impl Default for Config { fn default()->Self { Self { schema_version: 1, project: Project::default(), checks: Checks::default() } } }
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 struct Project { #[serde(default)] name:String }
 #[derive(Debug, Clone, Serialize, Deserialize)]
