@@ -2,7 +2,7 @@
 
 ## Repository state
 - Repository: https://github.com/hosmaznazfar/AIWorkFlow
-- Branch: default branch used by GitHub Contents API; branch name was not independently queried in this session.
+- Branch: main.
 - Latest source implementation commit: 746993ff3f8a82f9daafe133c9f6d2a7621e7121. Latest CLI guidance/template commit before this handover refresh: 8e38348910029b0ac9f0500532679264b86b8861.
 - Local worktree state: unknown; no local checkout or local tests were run in this session.
 
@@ -36,4 +36,4 @@ The first Rust CLI implementation is now committed, but it has not been compiled
 ## Safety and validation status
 - No local build or test commands were run; Rust/Cargo is unavailable in this execution environment. The GitHub Actions workflow is configured, but its result has not been verified.
 - No package installation, project command execution, staging, commit from a local worktree, push, merge, deployment, or migration was performed.
-- Do not treat target command examples as implemented functionality.
+- Implemented commands: init, doctor, workflow validate, check add/list/remove/dry-run/run. Graph, traces, sync, status, and handover remain unimplemented in the Rust core.
