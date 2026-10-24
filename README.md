@@ -114,3 +114,18 @@ See [Dependencies](docs/DEPENDENCIES.md) for details.
 ## Current scope
 
 This repository is the common workflow source of truth. A project should copy/adapt the templates into its own repository so that it remains usable independently and the local project instructions describe its actual dependencies and commands.
+
+## CLI implementation direction
+
+The workflow should be language-independent. The current MJS CLI is a prototype, not a requirement for projects that adopt AIWorkFlow.
+
+Recommended target:
+- Rust for the core pj executable, using clap for command parsing. A prebuilt binary avoids requiring Node.js or Python just to run workflow commands; building from source requires the Rust toolchain.
+- TOML for versioned project and action manifests.
+- A tiny POSIX-shell launcher on Unix (works when invoked from Bash or Fish) and a PowerShell launcher on Windows. Launchers contain no workflow logic.
+- Project actions can invoke configured commands or scripts written in Python, Rust, Bash, Fish, .NET, Go, Node.js, or other languages. Only the runtime required by a selected action is needed.
+- Shared prompts, handover, checklists, Graphify conventions, and safety rules remain independent of the CLI implementation.
+
+Target command examples include pj doctor, pj action list, pj action show rust:quality, pj action add python:security, pj run rust:quality, pj workflow validate, and pj workflow explain rust:quality. These are target design examples, not claims that the current MJS prototype implements them.
+
+Adding an action should validate its manifest, show the proposed diff, document actual prerequisites and invocation in the target project's README, and preserve shared safety rules. No action should silently stage, commit, push, merge, deploy, or migrate. See docs/WORKFLOW_SPEC.md and docs/PROJECT_INTEGRATION.md for the detailed contract.
