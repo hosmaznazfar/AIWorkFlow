@@ -13,9 +13,9 @@ AIWorkFlow is designed to be vendored into each project, so each repository cont
 ## Integration process
 
 1. Clone or download AIWorkFlow.
-2. Copy templates into the target project, adapting them to its actual stack and naming. Preserve existing project instructions by merging rather than replacing.
-3. Create a project-local `project-workflow.json` from the template and fill in project name, detected package managers, checks, graph paths, trace-query file, handover path, and safe command allowlist.
-4. Add `./pj` as a small launcher for the project's `scripts/pj.mjs`. On Windows, document `node scripts/pj.mjs` as the portable alternative if a shell launcher is not available.
+2. Run `node scripts/setup.mjs /path/to/target-project` from the AIWorkFlow checkout. It copies the Rust CLI core and workflow templates, refuses file conflicts, and creates a POSIX launcher for new target projects. Preserve existing project instructions by merging rather than replacing.
+3. Run `./pj init` in the target project to create `.pj/workflow.toml`, detect supported test entry points, and add a managed README section. Review all detected commands before execution.
+4. The generated `./pj` launcher invokes the Rust core through Cargo unless a release binary is present. On Windows, use PowerShell or run Cargo with `pj-core/Cargo.toml` until a native launcher is provided.
 5. Add `AI_README.md`, `CHATGPT_CONTEXT.md`, `docs/CHATGPT_NEW_CHAT_STARTER.md`, `docs/handover/current.md`, and `FEATURE_IMPLEMENTATION_CHECKLIST.md`. Use project-specific paths only after verifying conventions.
 6. Inspect the target project's current Graphify configuration. If absent and graph support is wanted, install Graphify using its official instructions and build the graph in the assistant. Do not assume a graph exists.
 7. Ensure the target project's README documents every required and optional dependency, installation steps, available commands, checks, and fallback commands.
@@ -35,9 +35,9 @@ AIWorkFlow is designed to be vendored into each project, so each repository cont
 ## Acceptance criteria
 
 - A human-readable project README contains accurate setup/dependency/command documentation.
-- `./pj help` matches implemented commands.
-- `./pj status` shows branch, HEAD and worktree status where Git is available.
-- `./pj check all` runs only detected/configured checks and reports skipped ones.
+- `./pj --help` matches the implemented Rust commands.
+- `./pj doctor` reports project manifests, available tools, and official installation guidance for missing runtimes.
+- `./pj check` runs configured steps in declaration order; `--dry-run`, `--list`, `--remove NAME`, and `--add-command COMMAND` configure or inspect checks without implicit shell execution.
 - `./pj sync` fails visibly if a required refresh/review step fails, but never commits or pushes.
 - A new chat starter and tracked handover are present and reference the actual branch/file conventions.
 - Existing project functionality, instructions and scripts are preserved.
@@ -53,7 +53,7 @@ An action-add workflow should inspect the project, select or create an action te
 
 ## Init and checks
 
-The target `pj init` command should scan the target project and present a plan before changing files. It should detect project manifests and lockfiles, core tool availability, uv, Graphify, configured checks, existing README sections, and conflicts. It should ask before installing missing prerequisites or project dependencies. A non-interactive consent flag can authorize documented non-privileged setup, but must not use sudo/admin elevation automatically or run arbitrary project scripts without clear consent.
+The initial `pj init` implementation detects common manifests and conventional test entry points, preserves an existing config, updates a README managed section, reports installed tools, and asks before optional uv/Graphify installation. Detection is not exhaustive; inspect `.pj/workflow.toml` and the README diff before using the configured checks. A non-interactive consent flag can authorize documented non-privileged setup, but must not use sudo/admin elevation automatically or run arbitrary project scripts without clear consent.
 
 Graphify's official package is `graphifyy`; it installs the `graphify` executable. The documented uv path is `uv tool install graphifyy`. Registering the assistant integration (`graphify install`) and building/updating the graph inside an assistant are separate operations. If uv is missing, show official installation instructions for the detected platform rather than assuming a package manager. References: https://graphiffy.com/docs/install and https://docs.astral.sh/uv/getting-started/installation/.
 
@@ -62,3 +62,7 @@ Store project check steps in one canonical file such as `.pj/workflow.toml`. Con
 The target CLI should support `pj check`, `pj check list`, `pj check add --name NAME -- executable arg...`, `pj check --add-command "npm run test"`, `pj check remove NAME`, `pj check --dry-run`, and `pj workflow validate`. Adding a step updates configuration only; it must not execute the new command implicitly. Use explicit shell invocations for pipes or shell operators. Show diffs before mutating the check list.
 
 After initialization or check configuration changes, update a managed section in the target README with detected dependencies, actual setup instructions, configured checks, and validation commands. Never replace the whole README or invent dependencies. If detection is ambiguous, document the ambiguity and ask.
+
+### Current implementation boundary
+
+The first Rust core supports init, doctor, workflow validation, and ordered check execution/configuration. It currently detects Node test scripts, Cargo, Go, pytest-marked Python projects, and root-level .NET solutions. Graph/trace/sync/status/handover commands and Windows-native packaging are not implemented in the Rust core yet. GitHub Actions is configured for formatting, tests, and Clippy; confirm a successful run before production use.
