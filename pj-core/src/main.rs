@@ -95,7 +95,7 @@ fn detect_checks(r:&Path)->Vec<Step>{
     if r.join("Cargo.toml").is_file(){v.push(mkstep("rust-tests","cargo",vec!["test".into()]))}
     if r.join("go.mod").is_file(){v.push(mkstep("go-tests","go",vec!["test".into(),"./...".into()]))}
     if let Ok(py)=fs::read_to_string(r.join("pyproject.toml")){if py.contains("pytest"){
-        let(c,a)=if has_exe("uv"){("uv",vec!["run".into(),"pytest".into()])}else{("python",vec!["-m".into(),"pytest".into()])};v.push(mkstep("python-tests",c,a));
+        let(c,a)=if has_exe("uv"){("uv",vec!["run".into(),"pytest".into()])}else{(if has_exe("python3"){"python3"}else{"python"},vec!["-m".into(),"pytest".into()])};v.push(mkstep("python-tests",c,a));
     }}
     if let Ok(es)=fs::read_dir(r){for e in es.flatten(){let p=e.path();if p.extension().is_some_and(|x|x=="sln"||x=="slnx"){
         if let Some(n)=p.file_name().and_then(|x|x.to_str()){v.push(mkstep("dotnet-tests","dotnet",vec!["test".into(),n.into()]));break}
