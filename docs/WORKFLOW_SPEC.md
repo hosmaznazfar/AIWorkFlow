@@ -79,3 +79,36 @@ Target CLI extension points:
 Action manifests should declare a unique name, purpose, supported stack, executable plus argument array or repository-relative script, prerequisites/install guidance, required/optional status, timeout, working directory, expected outputs/checks, documentation to update, and read-only/write safety classification. Prefer argument arrays over interpolated shell strings. Adding an action must show a diff and update the actual project README with its real dependencies, installation, invocation, and validation instructions. Preserve the common planning, Graphify, test, handover, and Git safety rules. Do not execute downloaded/unreviewed actions automatically or allow them to bypass approval for consequential operations.
 
 These are target-contract definitions; the existing MJS starter does not yet implement all listed commands or action management. Do not document a command as available in a project until it is implemented and tested there.
+
+## Initialization and dependency management
+
+Target command: `pj init`. It should identify the project root, inspect manifests and lockfiles, detect Git and relevant language toolchains, validate the workflow manifest, and report which integrations are available. It should check for `uv` and Graphify. If Graphify is wanted and missing, offer to install the official PyPI package `graphifyy` using `uv tool install graphifyy`; the resulting command is `graphify`. Explain separately that `graphify install` registers an assistant skill and that graph generation is performed from within a supported assistant. Official references: https://graphiffy.com/docs/install and https://graphiffy.com/docs/cli.
+
+If uv is missing, explain the official platform-specific installation options from https://docs.astral.sh/uv/getting-started/installation/. Do not use a guessed package-manager command. Default behavior is interactive and asks before installation. An explicit non-interactive consent flag may authorize documented, non-privileged prerequisite installs, but must not bypass OS privilege prompts, overwrite user configuration, or execute arbitrary project scripts. Never install every language toolchain by default.
+
+Dependency handling is layered:
+1. Core pj executable and its runtime/build requirements.
+2. Optional workflow tools such as uv and Graphify.
+3. Project runtimes detected from manifests and lockfiles.
+4. Dependencies required by individual configured actions.
+
+The README should contain a managed AIWorkFlow section describing only detected or explicitly configured dependencies, installation instructions, commands, and validation steps. Preserve unrelated README content. On ambiguous detection, report the evidence and ask instead of guessing.
+
+## Configurable multi-language checks
+
+The target CLI should store checks in one project-local, versioned file, preferably `.pj/workflow.toml`. The check pipeline must support any number of ordered steps from different ecosystems in the same repository. Example commands include npm run test, cargo test, uv run pytest, dotnet test, go test ./..., and explicit Bash or Fish scripts. Only configure a command when the repository's manifests, scripts, or user instruction support it.
+
+Target command contract:
+- `pj check` runs configured steps in order and stops on the first required failure by default; report all executed, skipped, and unavailable steps.
+- `pj check list` displays the configured sequence and prerequisites.
+- `pj check add --name NAME -- executable arg...` adds a command with an explicit argument array.
+- `pj check --add-command "npm run test"` is a convenience form that parses a quoted command into executable and arguments without implicit shell evaluation. Document its parsing rules and reject malformed input.
+- `pj check remove NAME` removes a named step after showing the change.
+- `pj check --dry-run` shows exactly what would execute without running it.
+- `pj workflow validate` checks configuration without executing project commands.
+
+Each step should declare name, executable, arguments, working directory, required/optional status, runtime prerequisites, and optional timeout. If shell operators or pipelines are required, make shell invocation explicit (for example, `bash -lc ...`) rather than silently evaluating a command string. Adding or removing a step modifies the one canonical config file and shows the diff. README documentation should be synchronized when setup or dependencies change.
+
+The CLI must distinguish configuring a command from executing it. `--add-command` adds a step but must not run it unless the user supplies an explicit run option. Never install project dependencies or run post-install scripts merely because a command was added.
+
+These are target requirements; the existing MJS prototype does not implement this contract yet. Do not claim support until the Rust CLI, schema validation, platform installation paths, and integration tests are implemented.
