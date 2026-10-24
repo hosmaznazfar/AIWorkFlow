@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "queries": [
+    {
+      "name": "replace-with-project-critical-path",
+      "query": "Replace with a repeatable question about a critical call or data path in this project",
+      "enabled": false,
+      "notes": "Enable only after verifying that the query is useful and supported by this project's graph."
+    }
+  ]
+}
