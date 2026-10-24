@@ -42,3 +42,11 @@ AIWorkFlow is designed to be vendored into each project, so each repository cont
 - A new chat starter and tracked handover are present and reference the actual branch/file conventions.
 - Existing project functionality, instructions and scripts are preserved.
 - Validation and remaining manual steps are recorded.
+
+## Language-neutral CLI and project actions
+
+The MJS starter is a prototype, not a requirement. The recommended long-term core is a Rust executable distributed as a prebuilt binary or built from source. Use a small POSIX-shell launcher on Unix (usable from Bash and Fish) and a PowerShell launcher on Windows. Keep project metadata and action manifests in a versioned declarative format such as TOML.
+
+The core CLI should not require Node.js or Python. A project action can invoke the actual tools already used by the target repository: Python/uv, Cargo, Bash, Fish, dotnet, Go, Node.js, or another explicit executable. Install only the runtime needed by the chosen action. Python is a valid quicker prototype if accepting Python as a dependency is a deliberate choice; Bash is best for launchers/glue rather than complex config parsing.
+
+An action-add workflow should inspect the project, select or create an action template, declare the command and arguments, prerequisites, timeout and safety level, validate the manifest, show the diff, and update the target README with actual dependencies and usage. Preserve the shared planning, verification, handover, Graphify and Git safety rules. Never run an unreviewed downloaded action or silently stage/commit/push/merge/deploy/migrate. The exact new command names are target design until implemented and tested.
