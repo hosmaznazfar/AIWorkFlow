@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+if [ -x "$ROOT/pj-core/target/release/pj" ]; then
+  exec "$ROOT/pj-core/target/release/pj" "$@"
+fi
+if ! command -v cargo >/dev/null 2>&1; then
+  echo "[pj] Rust/Cargo is required. Install Rust: https://www.rust-lang.org/tools/install" >&2
+  exit 127
+fi
+exec cargo run --quiet --manifest-path "$ROOT/pj-core/Cargo.toml" -- "$@"
