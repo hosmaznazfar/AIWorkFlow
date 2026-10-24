@@ -3,7 +3,7 @@
 ## Repository state
 - Repository: https://github.com/hosmaznazfar/AIWorkFlow
 - Branch: default branch used by GitHub Contents API; branch name was not independently queried in this session.
-- Latest verified repository commit when this handover was updated: 460b476f6727ce93c64342d4809522c54a6a6eed (GitHub Actions workflow adjustment).
+- Latest source implementation commit: 746993ff3f8a82f9daafe133c9f6d2a7621e7121. Latest CLI guidance/template commit before this handover refresh: 8e38348910029b0ac9f0500532679264b86b8861.
 - Local worktree state: unknown; no local checkout or local tests were run in this session.
 
 ## Objective
@@ -18,6 +18,9 @@ Document the target `pj` workflow architecture so it can initialize dependencies
 - Added `templates/pj-workflow.toml` as a starter schema for ordered check steps.
 - Added `pj-core/` Rust CLI with clap/TOML config parsing, project/tool detection, opt-in uv/Graphify install prompts, README managed-section updates, ordered check execution, dry-run/list/remove/add options, per-step timeout handling, and unit tests.
 - Added the root `pj` launcher and `.github/workflows/pj-core.yml` for rustfmt, tests, and Clippy.
+- Updated `scripts/setup.mjs` to copy the Rust core into target projects and generate a Rust/Cargo-based launcher for new targets.
+- Updated project integration/dependency docs and the generated AI README template to match the implemented command set.
+- Added a mixed-language detection unit test and README output for detected commands/tool availability.
 - Verified documentation and source writes through GitHub's API. External references were checked against official Graphify, uv, Rust clap, and mise documentation.
 
 ## Important limitation
