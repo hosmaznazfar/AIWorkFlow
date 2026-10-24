@@ -1,0 +1,44 @@
+# Integrating AIWorkFlow into a project
+
+AIWorkFlow is designed to be vendored into each project, so each repository contains its own usable instructions, CLI and dependencies guide.
+
+## Before you begin
+
+- Ensure the working tree is clean or save/stash work yourself.
+- Create a setup branch.
+- Read the project README, contributing instructions, AI/agent instructions, package manifests, CI, test scripts, .gitignore and existing CLI.
+- Record detected stack, baseline status and conflicting file paths.
+- Do not run setup against production systems.
+
+## Integration process
+
+1. Clone or download AIWorkFlow.
+2. Copy templates into the target project, adapting them to its actual stack and naming. Preserve existing project instructions by merging rather than replacing.
+3. Create a project-local `project-workflow.json` from the template and fill in project name, detected package managers, checks, graph paths, trace-query file, handover path, and safe command allowlist.
+4. Add `./pj` as a small launcher for the project's `scripts/pj.mjs`. On Windows, document `node scripts/pj.mjs` as the portable alternative if a shell launcher is not available.
+5. Add `AI_README.md`, `CHATGPT_CONTEXT.md`, `docs/CHATGPT_NEW_CHAT_STARTER.md`, `docs/handover/current.md`, and `FEATURE_IMPLEMENTATION_CHECKLIST.md`. Use project-specific paths only after verifying conventions.
+6. Inspect the target project's current Graphify configuration. If absent and graph support is wanted, install Graphify using its official instructions and build the graph in the assistant. Do not assume a graph exists.
+7. Ensure the target project's README documents every required and optional dependency, installation steps, available commands, checks, and fallback commands.
+8. Run CLI help/status and the safe checks supported by the environment. Verify generated files and diff.
+9. Ask for review before committing or pushing.
+
+## Existing-file policy
+
+- Never overwrite README.md, package.json scripts, .gitignore, CI workflows, editor rules, or existing AI instructions without merging and reviewing.
+- Preserve custom project workflows. Prefer a thin adapter that calls existing scripts.
+- Do not add Graphify, Python, Node, dotnet, or any language toolchain as mandatory unless the project actually needs it.
+- Do not install packages globally without user approval.
+- Keep secrets and local-only output out of Git.
+- Make setup idempotent: a second run should report already configured files and leave customized files unchanged.
+- If a conflict cannot be merged safely, stop and show the conflict.
+
+## Acceptance criteria
+
+- A human-readable project README contains accurate setup/dependency/command documentation.
+- `./pj help` matches implemented commands.
+- `./pj status` shows branch, HEAD and worktree status where Git is available.
+- `./pj check all` runs only detected/configured checks and reports skipped ones.
+- `./pj sync` fails visibly if a required refresh/review step fails, but never commits or pushes.
+- A new chat starter and tracked handover are present and reference the actual branch/file conventions.
+- Existing project functionality, instructions and scripts are preserved.
+- Validation and remaining manual steps are recorded.
