@@ -65,7 +65,7 @@ At new-chat startup, verify current GitHub state, read `CHATGPT_CONTEXT.md`, `AI
 
 ## Language-independent CLI and action extensions
 
-The shared workflow is independent of the target project's application language. The MJS CLI is a prototype; the recommended long-term core is a Rust executable using clap, with a versioned TOML manifest. A tiny POSIX-shell launcher can invoke it on Unix from Bash or Fish; provide a PowerShell launcher for Windows. Python is a reasonable alternative for a fast prototype when a Python runtime is an accepted dependency. Bash is appropriate for launchers and simple glue, not the primary configuration engine. Fish should not be the canonical implementation because it is not broadly available across platforms.
+The shared workflow is independent of the target project's application language. The Rust CLI core now exists under `pj-core/`, uses clap and a versioned TOML manifest, and is launched through the root `pj` script. The MJS CLI remains a separate legacy prototype. A tiny POSIX-shell launcher can invoke it on Unix from Bash or Fish; provide a PowerShell launcher for Windows. Python is a reasonable alternative for a fast prototype when a Python runtime is an accepted dependency. Bash is appropriate for launchers and simple glue, not the primary configuration engine. Fish should not be the canonical implementation because it is not broadly available across platforms.
 
 Keep five concerns separate: shared workflow contract/docs; core CLI; project configuration; action implementations; optional integrations. A project action may invoke Python, Rust/Cargo, Bash, Fish, dotnet, Go, Node.js, or another explicitly configured executable. The core CLI must not assume all these runtimes are installed.
 
@@ -112,3 +112,7 @@ Each step should declare name, executable, arguments, working directory, require
 The CLI must distinguish configuring a command from executing it. `--add-command` adds a step but must not run it unless the user supplies an explicit run option. Never install project dependencies or run post-install scripts merely because a command was added.
 
 These are target requirements; the existing MJS prototype does not implement this contract yet. Do not claim support until the Rust CLI, schema validation, platform installation paths, and integration tests are implemented.
+
+## Rust CLI implementation boundary
+
+Implemented in the initial Rust core: `pj init`, `pj doctor`, `pj workflow validate`, ordered `pj check` execution, `--add-command`, `--list`, `--remove`, and `--dry-run`. `pj init` detects a limited set of project manifests and conventional test entry points, preserves an existing `.pj/workflow.toml`, and maintains a README managed section. Optional uv/Graphify installation prompts are interactive; non-interactive runs skip them. The core does not yet implement graph, trace, sync, status, or handover commands, and stack detection is intentionally conservative. CI is configured to run formatting, tests, and Clippy; verify its GitHub result before calling the implementation validated.
