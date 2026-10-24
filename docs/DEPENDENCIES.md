@@ -47,3 +47,21 @@ The AI assistant and GitHub integration are not dependencies installed by this r
 ## Verify dependencies
 
 For the current MJS prototype only, run node --version and git --version. For the target Rust CLI, verify pj --version and pj doctor once implemented. For Graphify, follow upstream install steps and run graphify --version. Then verify the project's own dependency/version checks.
+
+## Init behavior and prerequisite detection
+
+The target `pj init` should check for the core CLI, Git, uv, and Graphify, then inspect the project manifests to detect other required tools. It should offer installation or provide official instructions for missing tools. Do not auto-install all ecosystems.
+
+### uv
+
+uv is an optional Python environment/package manager and is also the recommended isolated installer for Graphify. Official installation instructions: https://docs.astral.sh/uv/getting-started/installation/. The exact method depends on the operating system. Prefer official instructions or a detected trusted package manager; do not guess a command or invoke administrator privileges silently.
+
+### Graphify
+
+Official package: `graphifyy` (double y); installed executable: `graphify`. Recommended documented install: `uv tool install graphifyy`. Then `graphify install` registers the assistant skill. Graph generation is a separate action inside the supported assistant, such as `/graphify .` where that assistant supports slash-command syntax. CLI installation alone does not create the project's graph. References: https://graphiffy.com/docs/install and https://graphiffy.com/docs/cli.
+
+### Project runtimes
+
+Detect rather than assume project tools: package.json and JavaScript lockfiles for Node.js package managers; pyproject.toml and Python lockfiles for Python; Cargo.toml and Cargo.lock for Rust; solution/project files and global.json for .NET; go.mod for Go; and explicit scripts or user configuration for shell actions. These are clues, not permission to install or run anything automatically. Document the detected evidence and ask when the correct command is ambiguous.
+
+The single project check manifest should list every configured check in execution order and record each step's runtime prerequisites. A mixed-language monorepo can configure Node.js, Rust, Python, .NET, Go, and shell steps together. Missing optional runtimes should be reported as skipped with guidance; missing required runtimes or failed required checks must produce a non-zero result.
