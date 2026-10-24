@@ -46,7 +46,7 @@ for (const [src, dst] of mapping) {
 }
 const launcher = join(targetRoot, "pj");
 if (!existsSync(launcher)) {
-  writeFileSync(launcher, '#!/bin/sh\nset -eu\nROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"\nif [ -x "$ROOT/pj-core/target/release/pj" ]; then exec "$ROOT/pj-core/target/release/pj" "$@"; fi\nif ! command -v cargo >/dev/null 2>&1; then echo "[pj] Rust/Cargo is required: https://www.rust-lang.org/tools/install" >&2; exit 127; fi\nexec cargo run --quiet --manifest-path "$ROOT/pj-core/Cargo.toml" -- "$@"\n', { flag: "wx" });
+  writeFileSync(launcher, '#!/bin/sh\nset -eu\nROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"\nif [ -x "$ROOT/pj-core/target/release/pj" ]; then exec "$ROOT/pj-core/target/release/pj" "$@"; fi\nif ! command -v cargo >/dev/null 2>&1; then\n  echo "[pj] Rust/Cargo is required. Official installer: https://www.rust-lang.org/tools/install"\n  if [ ! -t 0 ] || [ ! -t 1 ]; then echo "[pj] Non-interactive session; install Rust/Cargo and retry." >&2; exit 127; fi\n  printf "Install Rust using the official rustup installer now? [y/N] " ; IFS= read -r answer\n  case "$answer" in y|Y|yes|YES)\n    command -v curl >/dev/null 2>&1 || { echo "[pj] curl is required." >&2; exit 127; }\n    installer=$(mktemp); trap \'rm -f "$installer"\' EXIT HUP INT TERM\n    curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs -o "$installer"\n    sh "$installer" -y; rm -f "$installer"; trap - EXIT HUP INT TERM\n    PATH="$HOME/.cargo/bin:$PATH"; export PATH ;;\n  *) echo "[pj] Install Rust/Cargo and retry." >&2; exit 127 ;; esac\nfi\nexec cargo run --quiet --manifest-path "$ROOT/pj-core/Cargo.toml" -- "$@"\n', { flag: "wx" });
   chmodSync(launcher, 0o755);
   console.log("Created pj");
 } else {
