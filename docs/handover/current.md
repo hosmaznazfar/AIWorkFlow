@@ -16,10 +16,12 @@ Document the target `pj` workflow architecture so it can initialize dependencies
 - Updated `docs/DEPENDENCIES.md` with official uv/Graphify install guidance and runtime detection notes.
 - Added `docs/CHECK_CONFIGURATION.md` with a configuration contract and acceptance tests.
 - Added `templates/pj-workflow.toml` as a starter schema for ordered check steps.
-- Verified the changed files by reading them back from GitHub. External references were checked against the official Graphify, uv, Rust clap, and mise documentation.
+- Added `pj-core/` Rust CLI with clap/TOML config parsing, project/tool detection, opt-in uv/Graphify install prompts, README managed-section updates, ordered check execution, dry-run/list/remove/add options, per-step timeout handling, and unit tests.
+- Added the root `pj` launcher and `.github/workflows/pj-core.yml` for rustfmt, tests, and Clippy.
+- Verified documentation and source writes through GitHub's API. External references were checked against official Graphify, uv, Rust clap, and mise documentation.
 
 ## Important limitation
-These are design/docs/template changes only. The Rust CLI, `pj init`, dependency installer, TOML parser/validator, `pj check --add-command`, and multi-language check executor are not implemented or tested yet. The existing `.mjs` CLI remains a prototype and does not consume `templates/pj-workflow.toml`.
+The first Rust CLI implementation is now committed, but it has not been compiled or tested in this execution environment because Rust/Cargo is unavailable here. GitHub Actions is configured to run formatting, tests, and Clippy; check the run result before considering the implementation verified. Detection currently covers conventional Node test scripts, Cargo, Go, pytest-marked Python projects, and root-level .NET solutions. Graph/trace/sync/status/handover commands remain unimplemented in the Rust core. The legacy MJS CLI remains separate and does not consume the TOML config.
 
 ## Next steps
 1. Implement the Rust CLI using clap and TOML parsing, including `pj doctor`, `pj init`, `pj check`, and `pj workflow validate`.
