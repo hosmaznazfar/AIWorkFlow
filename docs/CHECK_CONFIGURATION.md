@@ -15,7 +15,7 @@ Each `[[checks.steps]]` entry has:
 - `required`: whether a missing runtime or failing command fails the pipeline.
 - `timeout_seconds`: optional timeout.
 - `requires`: tool names that `pj doctor` should check.
-- `description`: short purpose shown by `pj check list` and `pj check --dry-run`.
+- `description`: short purpose shown by `pj check --list` and `pj check --dry-run`.
 
 Steps run in declaration order, so one file can include npm, Cargo, uv/Python, dotnet, Go, and shell commands in a monorepo. Do not add steps merely because a language exists; inspect manifests and existing scripts. A required step that cannot run should fail with actionable install guidance. An optional unavailable step should be clearly reported as skipped.
 
@@ -49,3 +49,8 @@ After setup or check configuration changes, update the managed AIWorkFlow sectio
 8. `--dry-run` does not execute commands or modify files.
 9. README updates preserve all user-authored content outside the managed section.
 10. No command stages, commits, pushes, merges, deploys, or migrates automatically.
+
+
+## Implemented CLI notes
+
+The first Rust implementation supports `pj init`, `pj doctor`, `pj workflow validate`, `pj check --add-command "npm run test"`, `pj check --list`, `pj check --remove NAME`, `pj check --dry-run`, and `pj check`. The add-command parser accepts quoted arguments but rejects shell operators, appends the step without running it, and never invokes a shell implicitly. Review `.pj/workflow.toml` before executing configured commands. `pj init` preserves an existing config and updates only the README section between the managed markers. Runtime support detection is best-effort and currently detects Node test scripts, Cargo, Go, pytest projects, and root-level .NET solutions.
