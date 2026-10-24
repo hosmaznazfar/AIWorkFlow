@@ -1,0 +1,28 @@
+# Project-local AIWorkFlow check configuration
+# Copy to .pj/workflow.toml and replace the empty list with checks verified for this repository.
+# The future Rust pj CLI will validate this TOML schema before executing any step.
+
+schema_version = 1
+
+[project]
+name = "<PROJECT_NAME>"
+
+[checks]
+# Fail after the first required step fails. Optional failures are reported but do not fail the pipeline.
+fail_fast = true
+
+# Example step (uncomment and adapt only if the command exists in this repository):
+# [[checks.steps]]
+# name = "frontend-tests"
+# command = "npm"
+# args = ["run", "test"]
+# cwd = "frontend"
+# required = true
+# timeout_seconds = 900
+# requires = ["node", "npm"]
+# description = "Run the frontend test script declared in frontend/package.json"
+
+# Multiple [[checks.steps]] entries are run in declaration order and can use different toolchains.
+# Prefer executable + argument arrays. For shell operators/pipelines, explicitly invoke a shell:
+# command = "bash"
+# args = ["-lc", "set -o pipefail; cargo test | tee test.log"]
