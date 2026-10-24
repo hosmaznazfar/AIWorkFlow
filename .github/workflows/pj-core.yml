@@ -3,7 +3,7 @@ on:
   push:
     paths: ["pj-core/**", "pj", "scripts/setup.mjs", "templates/**", ".github/workflows/pj-core.yml"]
   pull_request:
-    paths: ["pj-core/**", "pj", ".github/workflows/pj-core.yml"]
+    paths: ["pj-core/**", "pj", "scripts/setup.mjs", "templates/**", ".github/workflows/pj-core.yml"]
   workflow_dispatch:
 permissions:
   contents: read
