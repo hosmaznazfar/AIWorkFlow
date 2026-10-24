@@ -129,3 +129,28 @@ Recommended target:
 Target command examples include pj doctor, pj action list, pj action show rust:quality, pj action add python:security, pj run rust:quality, pj workflow validate, and pj workflow explain rust:quality. These are target design examples, not claims that the current MJS prototype implements them.
 
 Adding an action should validate its manifest, show the proposed diff, document actual prerequisites and invocation in the target project's README, and preserve shared safety rules. No action should silently stage, commit, push, merge, deploy, or migrate. See docs/WORKFLOW_SPEC.md and docs/PROJECT_INTEGRATION.md for the detailed contract.
+
+## Initialization and configurable checks
+
+The target CLI should provide `pj init` to inspect the repository, detect available toolchains and package managers, validate workflow configuration, and offer installation of workflow prerequisites. It should check for `uv` and Graphify, install Graphify with the official package name `graphifyy` through `uv tool install graphifyy` when requested, and explain that `graphify install` registers the assistant skill while graph generation is a separate assistant action. Official references: https://graphiffy.com/docs/install and https://docs.astral.sh/uv/getting-started/installation/.
+
+Initialization should detect the actual project stack from manifests and lockfiles, then offer only relevant setup steps. It must not install every ecosystem by default. Ask before installing tools or project dependencies; `--yes` may consent to documented, non-privileged installation steps, but must never bypass privilege prompts or execute arbitrary project scripts silently.
+
+Checks should live in one versioned file, preferably `.pj/workflow.toml`, and support ordered steps from multiple ecosystems. For example, a single check pipeline may contain `npm run test`, `cargo test`, `uv run pytest`, and `dotnet test` if those projects actually exist in the repository. Each step records a name, command/argument list, working directory, required/optional status, and prerequisite guidance.
+
+Target usage examples:
+
+```sh
+./pj init
+./pj doctor
+./pj check
+./pj check --add-command "npm run test"
+./pj check add --name rust-tests -- cargo test
+./pj check list
+./pj check remove rust-tests
+./pj check --dry-run
+```
+
+`--add-command` adds a configured step to the workflow file; it does not run that command unless an explicit run option is provided. Prefer the unambiguous `pj check add --name NAME -- executable arg...` form. Commands are executed without implicit shell expansion; shell pipelines must explicitly invoke a shell. The examples describe the target interface and are not claims that the current MJS prototype implements it.
+
+`pj init` should also create or update a managed README section documenting the actual detected dependencies, installation instructions, available `pj` commands, configured check steps, and validation commands. It must preserve the rest of the existing README and explain unresolved or ambiguous detections rather than guessing.
