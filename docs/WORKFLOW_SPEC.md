@@ -62,3 +62,20 @@ Tracked `docs/handover/current.md` should include:
 - blockers and exact next actions.
 
 At new-chat startup, verify current GitHub state, read `CHATGPT_CONTEXT.md`, `AI_README.md`, current handover, checklist and relevant source/docs/tests. Reconcile stale handover claims before acting.
+
+## Language-independent CLI and action extensions
+
+The shared workflow is independent of the target project's application language. The MJS CLI is a prototype; the recommended long-term core is a Rust executable using clap, with a versioned TOML manifest. A tiny POSIX-shell launcher can invoke it on Unix from Bash or Fish; provide a PowerShell launcher for Windows. Python is a reasonable alternative for a fast prototype when a Python runtime is an accepted dependency. Bash is appropriate for launchers and simple glue, not the primary configuration engine. Fish should not be the canonical implementation because it is not broadly available across platforms.
+
+Keep five concerns separate: shared workflow contract/docs; core CLI; project configuration; action implementations; optional integrations. A project action may invoke Python, Rust/Cargo, Bash, Fish, dotnet, Go, Node.js, or another explicitly configured executable. The core CLI must not assume all these runtimes are installed.
+
+Target CLI extension points:
+- pj doctor: inspect configuration, environment, tools, and Git status.
+- pj action list/show/add: discover, inspect, and scaffold project-specific actions.
+- pj run <action>: validate and run a configured action.
+- pj workflow validate/explain: validate manifests and explain an action without executing it.
+- existing stable commands for help, status, check, graph, traces, sync, and handover.
+
+Action manifests should declare a unique name, purpose, supported stack, executable plus argument array or repository-relative script, prerequisites/install guidance, required/optional status, timeout, working directory, expected outputs/checks, documentation to update, and read-only/write safety classification. Prefer argument arrays over interpolated shell strings. Adding an action must show a diff and update the actual project README with its real dependencies, installation, invocation, and validation instructions. Preserve the common planning, Graphify, test, handover, and Git safety rules. Do not execute downloaded/unreviewed actions automatically or allow them to bypass approval for consequential operations.
+
+These are target-contract definitions; the existing MJS starter does not yet implement all listed commands or action management. Do not document a command as available in a project until it is implemented and tested there.
