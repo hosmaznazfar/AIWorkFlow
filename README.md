@@ -19,12 +19,14 @@ A reusable, project-local workflow for AI coding assistants and developers. It s
 - `docs/WORKFLOW_SPEC.md` — end-to-end workflow and slash-command conventions.
 - `docs/PROJECT_INTEGRATION.md` — onboarding existing and new projects.
 - `docs/DEPENDENCIES.md` — dependency matrix and optional integrations.
+- `docs/CHECK_CONFIGURATION.md` — target schema and CLI contract for ordered multi-language checks.
 - `templates/AI_README.md` — project-local assistant guide.
 - `templates/CHATGPT_CONTEXT.md` — project-specific assistant context.
 - `templates/CHATGPT_NEW_CHAT_STARTER.md` — reusable new-chat prompt.
 - `templates/handover-current.md` — tracked handover template.
 - `templates/pj.mjs` — portable starter for a project-specific CLI.
-- `templates/project-workflow.json` — project config template.
+- `templates/project-workflow.json` — legacy prototype config template.
+- `templates/pj-workflow.toml` — target TOML template for ordered project checks.
 - `templates/FEATURE_IMPLEMENTATION_CHECKLIST.md` — phased feature checklist.
 - `templates/trace-queries.json` — optional reusable Graphify trace-query template.
 - `scripts/setup.mjs` — conservative bootstrapper for new/existing projects; refuses to overwrite workflow files.
@@ -110,6 +112,7 @@ See [Dependencies](docs/DEPENDENCIES.md) for details.
 - [Workflow specification](docs/WORKFLOW_SPEC.md)
 - [Project integration guide](docs/PROJECT_INTEGRATION.md)
 - [Dependencies](docs/DEPENDENCIES.md)
+- [Check configuration](docs/CHECK_CONFIGURATION.md)
 
 ## Current scope
 
